@@ -27,7 +27,7 @@ int main(void)
 	resetCmdString();
 	//newCmdChar('P');
 	newCmdChar('#');//SOF -> start of frame symbol
-	//newCmdChar('P');
+	newCmdChar('P');
 	newCmdChar('1');
 	//newCmdChar(' ');
 	newCmdChar('2');
@@ -44,12 +44,12 @@ int main(void)
 	printf("  char 1: '%d'\n", (unsigned char)('P' + '1' + '2' + '3'));
 	//'P'=0x50; '1'=0x31; '2'=0x32; '3'=0x33;
 	//(unsigned char)('P' + '1' + '2' + '3') = 0xE6=230 (decimal) -> not in ASCII table
-	newCmdChar((unsigned char)('P' + '1' + '2' + '3'));
+	//newCmdChar((unsigned char)('P' + '1' + '2' + '3'));
 	//
 	newCmdChar('!');//EOF -> end of frame symbol
 	res = cmdProcessor();
 	//printf("cmdProcessor output to P 1 2 3: %d, Kp=%c,Ti=%c,Td=%c \n\r", res, Kp, Ti, Td);
-	printf("  *cmdProcessor output to command '#P123!': return=%d, Kp=%c,Ti=%c,Td=%c \n\r", res, Kp, Ti, Td);
+	printf("  *cmdProcessor output to command '#P123!': return=%d, Kp=%d,Ti=%d,Td=%d \n\r", res, Kp, Ti, Td);
 	printf("\n");
 	if((res != SUCCESS) && (cmdStringLen == MAX_CMD_STRING_SIZE)) resetCmdString();
 	chars_left();
@@ -73,17 +73,28 @@ int main(void)
 	return(0);
 	}
 
+//------------------------------------------------------------------------------
 void chars_left()//displays the amount of free space of the cmdString
 	{
 	printf("    space left: %d\n", MAX_CMD_STRING_SIZE - cmdStringLen);
 	}
+//------------------------------------------------------------------------------
 
-/*
+//------------------------------------------------------------------------------
+void print_string()
+	{
+	printf("    string: ");
+	for(int i = 0; i < cmdStringLen; i++) printf("%c", cmdString[i]);
+	printf("\n");
+	}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 void print_usage()
 	{
-	printf("    Usage: %d/%d\n\n", cmdStringLen, MAX_CMD_STRING_SIZE);
+	printf("    Usage: %d/%d\n", cmdStringLen, MAX_CMD_STRING_SIZE);
 	}
-*/
+//------------------------------------------------------------------------------
 
 
 //every time the cmdProcessor is called and an error happens, should we reset the cmdString ???

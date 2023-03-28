@@ -68,12 +68,15 @@ int cmdProcessor(void)
 		if(cmdString[i] == SOF_SYM) break;//the SOF symbol was found
 		}
 
+	//printf("hello!!!\n");
+
 	//If a SOF_SYM was found, look for command
 	if(i < cmdStringLen)
 		{
-		if(((i + 1) < cmdStringLen) && (cmdString[i + 1] == 'P')) /* P command detected */
+		if( ((i + 1) < cmdStringLen) && (cmdString[i + 1] == 'P') ) /* P command detected */
 			{
 			//P command -> input {Kp; Ti; Td}
+			printf("Command P:\n");
 
 			//the command does not have all the correct fields -> missing parameters
 			//parameters => {SOF; P; Kp; Ti; Td; EOF}
@@ -81,32 +84,38 @@ int cmdProcessor(void)
 
 			//the cmdString does not have the EOF_SYM
 			if(cmdString[i + 5] != EOF_SYM) return(CMD_STRING_INVALID);
-			//should it be this or should it be CMD_STRING_SIZE_ERROR, or ERROR, or CMD_STRING_FORMAT ???
+			//should it be this error or should it be CMD_STRING_SIZE_ERROR, or ERROR, or CMD_STRING_FORMAT ???
 
+			//printf("char: %c\n", cmdString[i + 2]);
 			//convert char to int (typecasting conversion) -> (int)newChar -> conversion error ???
 			if((cmdString[i + 2] >= '0') && (cmdString[i + 2] <= '9'))
 				{
-				Kp = (int)cmdString[i + 2];//proportional gain (typecasting conversion)
+				Kp = (int)cmdString[i + 2] - 48;//proportional gain (typecasting conversion)
+				//printf("Kp:%d\n", Kp);
 				}
 			else
 				{
 				return(CMD_STRING_FORMAT);//correct error???
 				}
 
+			//printf("char: %c\n", cmdString[i + 3]);
 			//convert char to int (typecasting conversion) -> (int)newChar -> conversion error ???
-			if((cmdString[i + 3] >= '0') && (cmdString[i + 3] <= '9'))
+			if( (cmdString[i + 3] >= '0') && (cmdString[i + 3] <= '9') )
 				{
-				Ti = (int)cmdString[i + 3];//integration period (typecasting conversion)
+				Ti = (int)cmdString[i + 3] - 48;//integration period (typecasting conversion)
+				//printf("Ti:%d\n", Ti);
 				}
 			else
 				{
 				return(CMD_STRING_FORMAT);//correct error???
 				}
 
+			//printf("char: %c\n", cmdString[i + 4]);
 			//convert char to int (typecasting conversion) -> (int)newChar -> conversion error ???
-			if((cmdString[i + 4] >= '0') && (cmdString[i + 4] <= '9'))
+			if( (cmdString[i + 4] >= '0') && (cmdString[i + 4] <= '9') )
 				{
-				Td = (int)cmdString[i + 4];//derivation period (typecasting conversion)
+				Td = (int)cmdString[i + 4] - 48;//derivation period (typecasting conversion)
+				//printf("Td:%d\n", Td);
 				}
 			else
 				{
@@ -117,9 +126,10 @@ int cmdProcessor(void)
 			return(SUCCESS);//a valid command was found and executed
 			}
 
-		if(((i + 1) < cmdStringLen) && (cmdString[i + 1] == 'S')) /* S command detected */
+		if( ((i + 1) < cmdStringLen) && (cmdString[i + 1] == 'S') ) /* S command detected */
 			{
 			//S command -> output {Setpoint; Output; Error}
+			printf("Command S:\n");
 
 			//the command does not have all the correct fields
 			//parameters => {SOF; S; EOF}
@@ -160,8 +170,6 @@ int newCmdChar(char newChar)
 		{
 		cmdString[cmdStringLen] = newChar;//char insertion
 		cmdStringLen += 1;//update
-		print_string();
-		print_usage();
 		return(SUCCESS);//success
 		}
 
@@ -178,31 +186,13 @@ int newCmdChar(char newChar)
 //Resets the command string
 void resetCmdString(void)
 	{
+	printf("->String reset\n");
+
 	cmdStringLen = 0;//usage of the string
 
 	//is it necessary to overwrite the string ??
 	strcpy(cmdString, "");//cleans the string
 
-	printf("->String reset\n");
-	print_usage();
-
 	return;
-	}
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-void print_string()
-	{
-	printf("    string: ");
-	for(int i = 0; i < cmdStringLen; i++) printf("%c", cmdString[i]);
-	printf("\n");
-	}
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void print_usage()
-	{
-	printf("    Usage: %d/%d\n", cmdStringLen, MAX_CMD_STRING_SIZE);
 	}
 //------------------------------------------------------------------------------
