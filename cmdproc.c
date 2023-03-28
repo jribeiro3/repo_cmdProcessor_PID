@@ -18,19 +18,13 @@
 */
 //******************************************************************************
 
-#include <stdio.h>
+#include <stdio.h>//to use printf
 #include <string.h>//to use the strcpy
 
 #include "cmdproc.h"
 
 //------------------------------------------------------------------------------
-//Functions
-void print_string();
-void print_usage();
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-//Global variables
+//Global variables declarations
 
 //PID parameters -> external variables
 //Kp: proportional gain
@@ -47,9 +41,9 @@ int setpoint, output, error;
 
 /* Internal variables */
 //In the book "Complete Reference of C" it is mentioned that char is by default unsigned
-char cmdString[MAX_CMD_STRING_SIZE];//string -> should it be unsigned???
+static char cmdString[MAX_CMD_STRING_SIZE];//string -> should it be unsigned???
 //static unsigned char cmdStringLen = 0;//should not it be int instead of char???
-int cmdStringLen = 0;
+static int cmdStringLen = 0;
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -83,7 +77,7 @@ int cmdProcessor(void)
 		if( ((i + 1) < cmdStringLen) && (cmdString[i + 1] == 'P') ) /* P command detected */
 			{
 			//P command -> input {Kp; Ti; Td}
-			printf("Command P:\n");
+			printf("    Command P: ");
 
 			//the command does not have all the correct fields -> missing parameters
 			//parameters => {SOF; P; Kp; Ti; Td; EOF}
@@ -97,7 +91,7 @@ int cmdProcessor(void)
 			//convert char to int (typecasting conversion) -> (int)newChar -> conversion error ???
 			if((cmdString[i + 2] >= '0') && (cmdString[i + 2] <= '9'))
 				{
-				Kp = (int)cmdString[i + 2] - 48;//proportional gain (typecasting conversion)
+				Kp = (int)cmdString[i + 2];//proportional gain (typecasting conversion)
 				//printf("Kp:%d\n", Kp);
 				}
 			else
@@ -109,7 +103,7 @@ int cmdProcessor(void)
 			//convert char to int (typecasting conversion) -> (int)newChar -> conversion error ???
 			if( (cmdString[i + 3] >= '0') && (cmdString[i + 3] <= '9') )
 				{
-				Ti = (int)cmdString[i + 3] - 48;//integration period (typecasting conversion)
+				Ti = (int)cmdString[i + 3];//integration period (typecasting conversion)
 				//printf("Ti:%d\n", Ti);
 				}
 			else
@@ -121,13 +115,15 @@ int cmdProcessor(void)
 			//convert char to int (typecasting conversion) -> (int)newChar -> conversion error ???
 			if( (cmdString[i + 4] >= '0') && (cmdString[i + 4] <= '9') )
 				{
-				Td = (int)cmdString[i + 4] - 48;//derivation period (typecasting conversion)
+				Td = (int)cmdString[i + 4];//derivation period (typecasting conversion)
 				//printf("Td:%d\n", Td);
 				}
 			else
 				{
 				return(CMD_STRING_FORMAT);//correct error???
 				}
+
+			printf("  Kp=%c, Ti=%c, Td=%c \n\r", Kp, Ti, Td);
 
 			resetCmdString();
 			return(SUCCESS);//a valid command was found and executed
@@ -136,7 +132,7 @@ int cmdProcessor(void)
 		if( ((i + 1) < cmdStringLen) && (cmdString[i + 1] == 'S') ) /* S command detected */
 			{
 			//S command -> output {Setpoint; Output; Error}
-			printf("Command S:\n");
+			printf("    Command S: ");
 
 			//the command does not have all the correct fields
 			//parameters => {SOF; S; EOF}
@@ -146,7 +142,7 @@ int cmdProcessor(void)
 			if(cmdString[i + 2] != EOF_SYM) return(CMD_STRING_INVALID);
 			//should it be this or should it be CMD_STRING_SIZE_ERROR, or ERROR, or CMD_STRING_FORMAT ???
 
-			printf("  Setpoint = %d, Output = %d, Error = %d", setpoint, output, error);
+			printf("  Setpoint=%d, Output=%d, Error=%d\n", setpoint, output, error);
 			resetCmdString();
 			return(SUCCESS);//a valid command was found and executed
 			}
@@ -170,8 +166,6 @@ int cmdProcessor(void)
 //In the book "Complete Reference of C" it is mentioned that char is by default unsigned
 int newCmdChar(char newChar)
 	{
-	printf("  *add: '%c'\n", newChar);
-
 	//if not full, add char
 	if(cmdStringLen < MAX_CMD_STRING_SIZE)
 		{
@@ -199,5 +193,21 @@ void resetCmdString(void)
 	strcpy(cmdString, "");//cleans the string
 
 	return;
+	}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void print_usage()
+	{
+	printf("    Usage: %d/%d\n", cmdStringLen, MAX_CMD_STRING_SIZE);
+	}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+void print_string()
+	{
+	printf("    string: '");
+	for(int i = 0; i < cmdStringLen; i++) printf("%c", cmdString[i]);
+	printf("'\n");
 	}
 //------------------------------------------------------------------------------

@@ -45,25 +45,10 @@ int cmdProcessor(void);//processes the cmdString
 int newCmdChar(char newChar);//adds a char to the cmdString
 void resetCmdString(void);//resets the cmdString
 
+void print_usage();
+void print_string();
+
 //In the book "Complete Reference of C" it is mentioned that char is by default unsigned
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-//Global variables declarations
-
-//PID parameters
-//Kp: proportional gain
-//Ti: integration period
-//Td: derivation period
-extern int Kp, Ti, Td;
-//can not be used as double because of lack of number separator
-
-//Process variables
-extern int setpoint, output, error;
-//can not be used as double because of lack of number separator
-
-extern char cmdString[MAX_CMD_STRING_SIZE];
-extern int cmdStringLen;
 //------------------------------------------------------------------------------
 
 #endif

@@ -24,15 +24,13 @@
 
 //----------------------------------------------------------
 //local variables declaration
-int menuOption, c, ret;
+int menuOption, c;
 //----------------------------------------------------------
 
 //----------------------------------------------------------
 //Functions declaration
 static void printMenu();
 static void readMenuOption();
-void print_usage();
-void print_string();
 //----------------------------------------------------------
 
 //******************************************************************************
@@ -50,35 +48,10 @@ int main()
 		switch(menuOption)
 			{
 			//----------------------------------------------
-			case(1)://cmdString insertion
-				printf("  ->cmdString insertion\n");
-
-				char newChar;
-				printf("  element: ");
-				scanf("%c", &newChar);
-
-				//flushes the stdin
-				while(((c = getchar()) != '\n') && (c != EOF));
-
-				if(newCmdChar(newChar) == -1) printf("Full\n");
-
-				break;
-			//----------------------------------------------
-			case(2)://cmdString usage
-				printf("  ->cmdString usage\n");
-				print_usage();
-				break;
-			//----------------------------------------------
-			case(3)://cmdString print
-				printf("  ->cmdString print\n");
-				print_string();
-				break;
-			//----------------------------------------------
-			case(4)://cmdString process
+			case(1)://cmdString process
 				printf("  ->cmdString process\n");
-				ret = cmdProcessor();
 
-				switch(ret)
+				switch(cmdProcessor())
 					{
 					case 0:
 						printf("    Valid command\n");
@@ -102,6 +75,32 @@ int main()
 
 				break;
 			//----------------------------------------------
+			case(2)://cmdString insertion
+				printf("  ->cmdString insertion\n");
+
+				//******************************************
+				//input char
+				char newChar;
+				printf("  element: ");
+				scanf("%c", &newChar);
+
+				//flushes the stdin
+				while(((c = getchar()) != '\n') && (c != EOF));
+				//******************************************
+
+				if(newCmdChar(newChar) == -1) printf("  Full\n");//return value status
+				break;
+			//----------------------------------------------
+			case(3)://cmdString print
+				printf("  ->cmdString print\n");
+				print_string();
+				break;
+			//----------------------------------------------
+			case(4)://cmdString usage
+				printf("  ->cmdString usage\n");
+				print_usage();
+				break;
+			//----------------------------------------------
 			case(5)://cmdString reset
 				printf("  ->cmdString reset\n");
 				resetCmdString();
@@ -117,6 +116,7 @@ int main()
 				return(0);
 			//----------------------------------------------
 			default:
+				printf("  Invalid value!\n");
 				break;
 			//----------------------------------------------
 			}
@@ -132,10 +132,10 @@ static void printMenu()
 	printf("+===============================================+\n"
 		   "|            Manipulation functions             |\n"
 		   "+===============================================+\n"
-		   "| 1: Insert char in cmdString                   |\n"
-		   "| 2: Print cmdString usage                      |\n"
+		   "| 1: Process cmdString                          |\n"
+		   "| 2: Insert char in cmdString                   |\n"
 		   "| 3: Print cmdString                            |\n"
-		   "| 4: Process cmdString                          |\n"
+		   "| 4: Print cmdString usage                      |\n"
 		   "| 5: Reset cmdString                            |\n"
 		   "| 9: Help                                       |\n"
 		   "| 0: Quit                                       |\n"
@@ -159,22 +159,6 @@ static void readMenuOption()
 		}
 	while((menuOption < 0) || (menuOption > 9));
 	//printf("Selected: %d\n", menuOption);
-	}
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void print_usage()
-	{
-	printf("    Usage: %d/%d\n", cmdStringLen, MAX_CMD_STRING_SIZE);
-	}
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-void print_string()
-	{
-	printf("    string: '");
-	for(int i = 0; i < cmdStringLen; i++) printf("%c", cmdString[i]);
-	printf("'\n");
 	}
 //------------------------------------------------------------------------------
 
