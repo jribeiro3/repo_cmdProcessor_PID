@@ -1,7 +1,7 @@
 
 //******************************************************************************
 /**
- * @file main.c
+ * @file cmdproc.h
  * @remarks Note: using Whitesmiths indetation
  * @author (2023) José Ribeiro, 72473 <j.miguel.ribeiro at ua.pt>
 */
