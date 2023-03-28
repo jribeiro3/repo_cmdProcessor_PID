@@ -1,4 +1,12 @@
 
+//******************************************************************************
+/**
+ * @file main.c
+ * @remarks Note: using Whitesmiths indetation
+ * @author (2023) José Ribeiro, 72473 <j.miguel.ribeiro at ua.pt>
+*/
+//******************************************************************************
+
 #ifndef __CMD_PROC_H_
 #define __CMD_PROC_H_
 
@@ -54,6 +62,7 @@ extern int Kp, Ti, Td;
 extern int setpoint, output, error;
 //can not be used as double because of lack of number separator
 
+extern char cmdString[MAX_CMD_STRING_SIZE];
 extern int cmdStringLen;
 //------------------------------------------------------------------------------
 

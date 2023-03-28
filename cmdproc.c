@@ -10,6 +10,14 @@
 /*        code instead of being (defined) text literals   */
 /* ****************************************************** */
 
+//******************************************************************************
+/**
+ * @file main.c
+ * @remarks Note: using Whitesmiths indetation
+ * @author (2023) José Ribeiro, 72473 <j.miguel.ribeiro at ua.pt>
+*/
+//******************************************************************************
+
 #include <stdio.h>
 #include <string.h>//to use the strcpy
 
@@ -39,7 +47,7 @@ int setpoint, output, error;
 
 /* Internal variables */
 //In the book "Complete Reference of C" it is mentioned that char is by default unsigned
-static char cmdString[MAX_CMD_STRING_SIZE];//string -> should it be unsigned???
+char cmdString[MAX_CMD_STRING_SIZE];//string -> should it be unsigned???
 //static unsigned char cmdStringLen = 0;//should not it be int instead of char???
 int cmdStringLen = 0;
 //------------------------------------------------------------------------------
@@ -57,7 +65,6 @@ int cmdStringLen = 0;
 int cmdProcessor(void)
 	{
 	int i;
-	printf("->Process\n");
 
 	//Detect empty cmdString
 	if(cmdStringLen == 0) return(-1);//error: the command is empty or incomplete
@@ -186,8 +193,6 @@ int newCmdChar(char newChar)
 //Resets the command string
 void resetCmdString(void)
 	{
-	printf("->String reset\n");
-
 	cmdStringLen = 0;//usage of the string
 
 	//is it necessary to overwrite the string ??

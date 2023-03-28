@@ -10,82 +10,155 @@
 /*                                                        */
 /* ****************************************************** */
 
-#include <stdio.h>
+//******************************************************************************
+/**
+ * @file main.c
+ * @remarks Note: using Whitesmiths indetation
+ * @author (2023) José Ribeiro, 72473 <j.miguel.ribeiro at ua.pt>
+*/
+//******************************************************************************
+
+#include <stdio.h>//to use printf, scanf, getchar
+
 #include "cmdproc.h"
 
-//extern char Kp, Ti, Td;//isn't extern declared in the .h???
-//i think this line can not be in here
+//----------------------------------------------------------
+//local variables declaration
+int menuOption, c, ret;
+//----------------------------------------------------------
 
-void chars_left();//displays the amount of free space of the cmdString
-//void print_usage();
+//----------------------------------------------------------
+//Functions declaration
+static void printMenu();
+static void readMenuOption();
+void print_usage();
+void print_string();
+//----------------------------------------------------------
 
-int main(void)
+//******************************************************************************
+int main()
 	{
-	int res;
-
 	printf("Command processor test app\n\r");
 	resetCmdString();
-	//newCmdChar('P');
-	newCmdChar('#');//SOF -> start of frame symbol
-	newCmdChar('P');
-	newCmdChar('1');
-	//newCmdChar(' ');
-	newCmdChar('2');
-	newCmdChar('3');
-	//newCmdChar('t');
-	//newCmdChar('P');
 
-	//newCmdChar('1');
-	//newCmdChar(' ');
-	//newCmdChar('2');
-	//newCmdChar('3');
-	//newCmdChar('t');
-	//
-	printf("  char 1: '%d'\n", (unsigned char)('P' + '1' + '2' + '3'));
-	//'P'=0x50; '1'=0x31; '2'=0x32; '3'=0x33;
-	//(unsigned char)('P' + '1' + '2' + '3') = 0xE6=230 (decimal) -> not in ASCII table
-	//newCmdChar((unsigned char)('P' + '1' + '2' + '3'));
-	//
-	newCmdChar('!');//EOF -> end of frame symbol
-	res = cmdProcessor();
-	//printf("cmdProcessor output to P 1 2 3: %d, Kp=%c,Ti=%c,Td=%c \n\r", res, Kp, Ti, Td);
-	printf("  *cmdProcessor output to command '#P123!': return=%d, Kp=%d,Ti=%d,Td=%d \n\r", res, Kp, Ti, Td);
-	printf("\n");
-	if((res != SUCCESS) && (cmdStringLen == MAX_CMD_STRING_SIZE)) resetCmdString();
-	chars_left();
+	printMenu();
+	while(1)
+		{
+		//printMenu();
+		readMenuOption();//read the input of the menu option
 
-	newCmdChar('#');
-	newCmdChar('D');
-	newCmdChar('!');
-	res = cmdProcessor();
-	printf("  *cmdProcessor output to D (typo, should be S): % d\n\r", res);
-	if((res != SUCCESS) && (cmdStringLen == MAX_CMD_STRING_SIZE)) resetCmdString();
-	chars_left();
+		switch(menuOption)
+			{
+			//----------------------------------------------
+			case(1)://cmdString insertion
+				printf("  ->cmdString insertion\n");
 
-	newCmdChar('+');
-	newCmdChar('S');
-	newCmdChar('!');
-	res = cmdProcessor();
-	printf("  *cmdProcessor output to S with wrong SOF: % d\n\r", res);
-	if((res != SUCCESS) && (cmdStringLen == MAX_CMD_STRING_SIZE)) resetCmdString();
-	chars_left();
+				char newChar;
+				printf("  element: ");
+				scanf("%c", &newChar);
 
+				//flushes the stdin
+				while(((c = getchar()) != '\n') && (c != EOF));
+
+				if(newCmdChar(newChar) == -1) printf("Full\n");
+
+				break;
+			//----------------------------------------------
+			case(2)://cmdString usage
+				printf("  ->cmdString usage\n");
+				print_usage();
+				break;
+			//----------------------------------------------
+			case(3)://cmdString print
+				printf("  ->cmdString print\n");
+				print_string();
+				break;
+			//----------------------------------------------
+			case(4)://cmdString process
+				printf("  ->cmdString process\n");
+				ret = cmdProcessor();
+
+				switch(ret)
+					{
+					case 0:
+						printf("    Valid command\n");
+						break;
+					case -1:
+						printf("    Empty or incomplete command\n");
+						break;
+					case -2:
+						printf("    Invalid command\n");
+						break;
+					case -3:
+						printf("    Error detected\n");
+						break;
+					case -4:
+						printf("    Wrong format of the command\n");
+						break;
+					default:
+						printf("    Default\n");
+						break;
+					}
+
+				break;
+			//----------------------------------------------
+			case(5)://cmdString reset
+				printf("  ->cmdString reset\n");
+				resetCmdString();
+				break;
+			//----------------------------------------------
+			case(9)://help
+				printf("  ->help\n");
+				printMenu();
+				break;
+			//----------------------------------------------
+			case(0)://Exit
+				printf("  Exit!!!\n");
+				return(0);
+			//----------------------------------------------
+			default:
+				break;
+			//----------------------------------------------
+			}
+		menuOption = -1;//resets the menuOption
+		}
 	return(0);
 	}
+//******************************************************************************
 
 //------------------------------------------------------------------------------
-void chars_left()//displays the amount of free space of the cmdString
+static void printMenu()
 	{
-	printf("    space left: %d\n", MAX_CMD_STRING_SIZE - cmdStringLen);
+	printf("+===============================================+\n"
+		   "|            Manipulation functions             |\n"
+		   "+===============================================+\n"
+		   "| 1: Insert char in cmdString                   |\n"
+		   "| 2: Print cmdString usage                      |\n"
+		   "| 3: Print cmdString                            |\n"
+		   "| 4: Process cmdString                          |\n"
+		   "| 5: Reset cmdString                            |\n"
+		   "| 9: Help                                       |\n"
+		   "| 0: Quit                                       |\n"
+		   "+===============================================+\n\n");
 	}
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void print_string()
+static void readMenuOption()
 	{
-	printf("    string: ");
-	for(int i = 0; i < cmdStringLen; i++) printf("%c", cmdString[i]);
-	printf("\n");
+	menuOption = -1;
+	do
+		{
+		printf("Option: ");
+		scanf("%d", &menuOption);
+
+		//flushes the stdin
+		while(((c = getchar()) != '\n') && (c != EOF));
+
+		if((menuOption < 0) || (menuOption > 9)) printf("  Invalid value!\n");
+		}
+	while((menuOption < 0) || (menuOption > 9));
+	//printf("Selected: %d\n", menuOption);
 	}
 //------------------------------------------------------------------------------
 
@@ -96,6 +169,14 @@ void print_usage()
 	}
 //------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+void print_string()
+	{
+	printf("    string: '");
+	for(int i = 0; i < cmdStringLen; i++) printf("%c", cmdString[i]);
+	printf("'\n");
+	}
+//------------------------------------------------------------------------------
 
 //every time the cmdProcessor is called and an error happens, should we reset the cmdString ???
 //reset only when already full ???
